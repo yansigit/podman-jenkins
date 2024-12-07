@@ -30,6 +30,10 @@ ENV JENKINS_HOME=/var/jenkins_home
 # Switch to the jenkins user
 USER jenkins
 
+# Add podman alias
+RUN echo "alias podman='sudo -u podman podman'" >> ~/.bashrc && \
+    source ~/.bashrc
+
 # Expose Jenkins port
 EXPOSE 8080
 

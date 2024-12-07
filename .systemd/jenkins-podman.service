@@ -1,0 +1,24 @@
+[Unit]
+Description=Jenkins Podman Container
+After=network.target
+
+[Service]
+ExecStartPre=/usr/bin/podman pull docker.io/dockeruser2490/podman-jenkins:latest
+ExecStart=/usr/bin/podman run --rm \
+    --name jenkins \
+    --security-opt label=disable \
+    --security-opt unmask=ALL \
+    --device /dev/fuse \
+    -v /var/data/podman_jenkins_home/:/var/jenkins_home:Z \
+    -p 8080:8080 \
+    podman-jenkins:latest
+ExecStop=/usr/bin/podman stop jenkins
+ExecStopPost=/usr/bin/podman rm jenkins
+
+User=root
+Group=root
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

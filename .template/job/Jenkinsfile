@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        PODMAN_CMD = 'echo "NOPASSWORD" | sudo -S podman'
+    }
+
+    stages {
+        stage('Check Podman Version') {
+            steps {
+                script {
+                    // Check if Podman is installed and working by running 'podman --version'
+                    echo "Checking Podman version..."
+                    sh '''#!/bin/bash
+                    if command -v ${PODMAN_CMD} &> /dev/null
+                    then
+                        echo "Podman is installed. Version:"
+                        ${PODMAN_CMD} --version
+                    else
+                        echo "Podman is not installed. Exiting..."
+                        exit 1
+                    fi
+                    '''
+                }
+            }
+        }
+
+        stage('Run Podman Hello World Container') {
+            steps {
+                script {
+                    // Test Podman by running a simple container (e.g., "hello-world")
+                    echo "Running Podman Hello World container..."
+                    sh '''#!/bin/bash
+                    if ${PODMAN_CMD} run --rm hello-world
+                    then
+                        echo "Podman is working! Hello World container ran successfully."
+                    else
+                        echo "Podman failed to run the container."
+                        exit 1
+                    fi
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Podman is working properly on the Jenkins agent!"
+        }
+        failure {
+            echo "Podman tests failed. Please check the setup and configuration."
+        }
+    }
+}

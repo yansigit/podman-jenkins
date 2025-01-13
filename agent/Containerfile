@@ -1,15 +1,18 @@
 # Extend from quay.io/podman/stable
 FROM quay.io/podman/stable
 
-ARG JENKINS_URL
-ARG JENKINS_SECRET
-ARG JENKINS_AGENT_NAME
 ARG JENKINS_AGENT_WORKDIR
+ARG JENKINS_URL
+ARG JENKINS_AGENT_NAME
+ARG JENKINS_SECRET
 
 WORKDIR ${JENKINS_AGENT_WORKDIR}
 
-RUN dnf install -y java-21-openjdk-devel \
-    && curl -sO ${JENKINS_URL}/jnlpJars/agent.jar \
+RUN dnf install -y java-21-openjdk-devel wget \
     && dnf clean all
 
-CMD java -jar agent.jar -url "${JENKINS_URL}" -secret "${JENKINS_SECRET}" -name "${JENKINS_AGENT_NAME}" -webSocket -workDir "${JENKINS_AGENT_WORKDIR}"
+RUN wget ${JENKINS_URL}jnlpJars/agent.jar -O /tmp/agent.jar
+
+ENTRYPOINT java -jar /tmp/agent.jar \
+    -jnlpUrl ${JENKINS_URL}computer/${JENKINS_AGENT_NAME}/jenkins-agent.jnlp \
+    -secret ${JENKINS_SECRET}

@@ -9,10 +9,10 @@ RUN dnf install -y \
     curl \
     git \
     dnf-plugins-core \
+    fontconfig \
+    jenkins \
     && wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo \
     && rpm --import https://pkg.jenkins.io/redhat/jenkins.io-2023.key \
-    && dnf install fontconfig -y \
-    && dnf install -y jenkins \
     && dnf clean all
 
 USER root
@@ -35,13 +35,6 @@ RUN ln -s /usr/bin/podman /usr/bin/docker
 
 # Switch to the jenkins user
 USER podman
-
-# Add podman alias
-# RUN echo "alias podman='sudo -u podman podman'" >> ~/.bashrc && \
-# RUN echo "alias docker='podman'" >> ~/.bashrc && \
-#     echo "alias docker='podman'" >> ~/.bash_profile && \
-#     echo "alias docker='podman'" >> ~/.profile && \
-#     source ~/.bashrc
 
 # Expose Jenkins port
 EXPOSE 8080

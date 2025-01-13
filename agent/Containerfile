@@ -3,9 +3,9 @@ FROM quay.io/podman/stable
 
 WORKDIR /var/data/podman-jenkins-root
 
-RUN dnf install -y java-21-openjdk-devel
-
-RUN curl -sO http://10.0.0.63:8080/jnlpJars/agent.jar
+RUN dnf install -y java-21-openjdk-devel \
+    && curl -sO http://10.0.0.63:8080/jnlpJars/agent.jar \
+    && dnf clean all
 
 ARG JENKINS_URL
 ARG JENKINS_SECRET

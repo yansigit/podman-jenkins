@@ -17,6 +17,9 @@ RUN dnf install -y \
 
 USER root
 
+# Grant user with uid 1000 the same permissions as jenkins
+RUN usermod -aG jenkins podman
+
 # Allow jenkins user to use sudo to switch to podman user without password
 RUN echo 'jenkins ALL=(podman) NOPASSWD:ALL' >> /etc/sudoers
 
@@ -28,7 +31,7 @@ RUN mkdir -p /var/jenkins_home && \
 ENV JENKINS_HOME=/var/jenkins_home
 
 # Switch to the jenkins user
-USER jenkins
+USER podman
 
 # Add podman alias
 RUN echo "alias podman='sudo -u podman podman'" >> ~/.bashrc && \

@@ -1,0 +1,20 @@
+[Unit]
+Description=Jenkins Podman Agent Container
+After=network.target
+
+[Service]
+ExecStartPre=mkdir -p /var/data/podman/agent1/root
+ExecStartPre=chown -R 1000:1000 /var/data/podman/agent1/root
+
+ExecStart=/usr/bin/podman run --rm --name jenkins-podman-agent -v /var/data/podman/agent1/root:/var/data/podman/agent1/root dockeruser2490/podman-jenkins-agent
+
+ExecStop=/usr/bin/podman stop jenkins-podman-agent
+ExecStopPost=/usr/bin/podman rm jenkins
+
+User=root
+Group=root
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

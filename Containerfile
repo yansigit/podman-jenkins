@@ -4,7 +4,6 @@ FROM quay.io/podman/stable
 # Install dependencies and Jenkins
 RUN dnf install -y \
     wget \
-    java-21-openjdk-devel \
     sudo \
     curl \
     git \
@@ -12,7 +11,9 @@ RUN dnf install -y \
     fontconfig \
     && wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo \
     && rpm --import https://pkg.jenkins.io/redhat/jenkins.io-2023.key \
-    && dnf install -y jenkins \
+    && rpm --import https://yum.corretto.aws/corretto.key \
+    && curl -Lo /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo \
+    && dnf install -y java-21-amazon-corretto-devel jenkins \
     && dnf clean all
 
 USER root

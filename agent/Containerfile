@@ -1,18 +1,26 @@
 # Extend from quay.io/podman/stable
 FROM quay.io/podman/stable
 
+RUN rpm --import https://yum.corretto.aws/corretto.key \
+    && curl -Lo /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo \
+    && dnf install -y java-21-amazon-corretto-devel wget \
+    && dnf clean all
+
+USER podman
+
 ARG JENKINS_AGENT_WORKDIR
 ARG JENKINS_URL
 ARG JENKINS_AGENT_NAME
 ARG JENKINS_SECRET
 
-WORKDIR ${JENKINS_AGENT_WORKDIR}
+ENV JENKINS_AGENT_WORKDIR=${JENKINS_AGENT_WORKDIR}
+ENV JENKINS_SECRET=${JENKINS_SECRET}
+ENV JENKINS_AGENT_NAME=${JENKINS_AGENT_NAME}
+ENV JENKINS_URL=${JENKINS_URL}
 
-RUN dnf install -y java-21-openjdk-devel wget \
-    && dnf clean all
+WORKDIR ${JENKINS_AGENT_WORKDIR}
 
 RUN wget ${JENKINS_URL}jnlpJars/agent.jar -O /tmp/agent.jar
 
-ENTRYPOINT java -jar /tmp/agent.jar \
-    -jnlpUrl ${JENKINS_URL}computer/${JENKINS_AGENT_NAME}/jenkins-agent.jnlp \
-    -secret ${JENKINS_SECRET}
+CMD java -jar /tmp/agent.jar \
+    -url $JENKINS_URL -name $JENKINS_AGENT_NAME -secret $JENKINS_SECRET -webSocket -workDir $JENKINS_AGENT_WORKDIR

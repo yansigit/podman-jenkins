@@ -30,12 +30,18 @@ RUN mkdir -p /var/jenkins_home && \
 # Set environment variables for Jenkins
 ENV JENKINS_HOME=/var/jenkins_home
 
+# Create a symlink of podman to docker
+RUN ln -s /usr/bin/podman /usr/bin/docker
+
 # Switch to the jenkins user
 USER podman
 
 # Add podman alias
-RUN echo "alias podman='sudo -u podman podman'" >> ~/.bashrc && \
-    source ~/.bashrc
+# RUN echo "alias podman='sudo -u podman podman'" >> ~/.bashrc && \
+# RUN echo "alias docker='podman'" >> ~/.bashrc && \
+#     echo "alias docker='podman'" >> ~/.bash_profile && \
+#     echo "alias docker='podman'" >> ~/.profile && \
+#     source ~/.bashrc
 
 # Expose Jenkins port
 EXPOSE 8080

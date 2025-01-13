@@ -10,9 +10,9 @@ RUN dnf install -y \
     git \
     dnf-plugins-core \
     fontconfig \
-    jenkins \
     && wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo \
     && rpm --import https://pkg.jenkins.io/redhat/jenkins.io-2023.key \
+    && dnf install -y jenkins \
     && dnf clean all
 
 USER root

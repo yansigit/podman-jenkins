@@ -4,15 +4,15 @@ After=network.target
 
 [Service]
 ExecStartPre=/usr/bin/podman pull docker.io/dockeruser2490/podman-jenkins:latest
-ExecStartPre=mkdir -p /var/data/podman_jenkins_home/
-ExecStartPre=chown -R 1000:1000 /var/data/podman_jenkins_home/
+ExecStartPre=mkdir -p /var/data/podman/master/jenkins_home/
+ExecStartPre=chown -R 1000:1000 /var/data/podman/master/jenkins_home/
 
 ExecStart=/usr/bin/podman run --rm \
     --name jenkins \
     --security-opt label=disable \
     --security-opt unmask=ALL \
     --device /dev/fuse \
-    -v /var/data/podman_jenkins_home/:/var/jenkins_home:Z \
+    -v /var/data/podman/master/jenkins_home/:/var/jenkins_home:Z \
     -p 8080:8080 \
     dockeruser2490/podman-jenkins:latest
 

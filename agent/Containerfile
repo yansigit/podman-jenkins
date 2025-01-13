@@ -1,15 +1,15 @@
 # Extend from quay.io/podman/stable
 FROM quay.io/podman/stable
 
-WORKDIR /var/data/podman-jenkins-root
-
-RUN dnf install -y java-21-openjdk-devel \
-    && curl -sO http://10.0.0.63:8080/jnlpJars/agent.jar \
-    && dnf clean all
-
 ARG JENKINS_URL
 ARG JENKINS_SECRET
 ARG JENKINS_AGENT_NAME
 ARG JENKINS_AGENT_WORKDIR
 
-CMD java -jar agent.jar -url ${JENKINS_URL} -secret ${JENKINS_SECRET} -name ${JENKINS_AGENT_NAME} -webSocket -workDir ${JENKINS_AGENT_WORKDIR}
+WORKDIR ${JENKINS_AGENT_WORKDIR}
+
+RUN dnf install -y java-21-openjdk-devel \
+    && curl -sO ${JENKINS_URL}/jnlpJars/agent.jar \
+    && dnf clean all
+
+CMD java -jar agent.jar -url "${JENKINS_URL}" -secret "${JENKINS_SECRET}" -name "${JENKINS_AGENT_NAME}" -webSocket -workDir "${JENKINS_AGENT_WORKDIR}"
